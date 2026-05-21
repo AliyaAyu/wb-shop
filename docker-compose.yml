@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_DB: wb_db
+      POSTGRES_USER: wb_user
+      POSTGRES_PASSWORD: wb_pass
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DB_NAME: wb_db
+      DB_USER: wb_user
+      DB_PASSWORD: wb_pass
+      DB_HOST: db
+      DB_PORT: 5432
+
+volumes:
+  pg_data:
